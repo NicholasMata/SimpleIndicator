@@ -7,9 +7,9 @@
 
 import UIKit
 
-class SimpleIndicatorView: UIView {
-    let colors: [UIColor]
-    let lineWidth: CGFloat
+public class SimpleIndicatorView: UIView {
+    public let colors: [UIColor]
+    public let lineWidth: CGFloat
     
     private lazy var shapeLayer: ProgressShapeLayer = {
         ProgressShapeLayer(strokeColor: colors.first!, lineWidth: lineWidth)
@@ -27,7 +27,7 @@ class SimpleIndicatorView: UIView {
         }
     }
     
-    init(frame: CGRect,
+    public init(frame: CGRect,
          colors: [UIColor],
          lineWidth: CGFloat)
     {
@@ -39,11 +39,11 @@ class SimpleIndicatorView: UIView {
         self.backgroundColor = .clear
     }
     
-    convenience init(colors: [UIColor], lineWidth: CGFloat) {
+    public convenience init(colors: [UIColor], lineWidth: CGFloat) {
         self.init(frame: .zero, colors: colors, lineWidth: lineWidth)
     }
     
-    required init?(coder: NSCoder) {
+    public required init?(coder: NSCoder) {
         self.colors = [.black]
         self.lineWidth = 5
         
@@ -52,7 +52,7 @@ class SimpleIndicatorView: UIView {
         self.backgroundColor = .clear
     }
     
-    override func layoutSubviews() {
+    public override func layoutSubviews() {
         super.layoutSubviews()
         
         self.layer.cornerRadius = self.frame.width / 2
@@ -69,7 +69,7 @@ class SimpleIndicatorView: UIView {
         self.shapeLayer.path = path.cgPath
     }
     
-    func animateStroke() {
+    private func animateStroke() {
         let startAnimation = StrokeAnimation(
             type: .start,
             beginTime: 0.25,
@@ -102,7 +102,7 @@ class SimpleIndicatorView: UIView {
         self.layer.addSublayer(self.shapeLayer)
     }
     
-    func animateRotation() {
+    private func animateRotation() {
         let rotationAnimation = RotationAnimation(
             direction: .z,
             fromValue: 0,
