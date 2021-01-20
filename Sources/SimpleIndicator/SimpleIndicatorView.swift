@@ -15,7 +15,7 @@ public class SimpleIndicatorView: UIView {
         ProgressShapeLayer(strokeColor: colors.first!, lineWidth: lineWidth)
     }()
     
-    var isAnimating: Bool = false {
+    public var isAnimating: Bool = false {
         didSet {
             if self.isAnimating {
                 self.animateStroke()
