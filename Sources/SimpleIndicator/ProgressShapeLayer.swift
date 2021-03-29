@@ -22,4 +22,8 @@ class ProgressShapeLayer: CAShapeLayer {
         self.fillColor = UIColor.clear.cgColor
         self.lineCap = .round
     }
+    
+    override init(layer: Any) {
+        super.init(layer: layer)
+    }
 }

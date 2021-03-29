@@ -7,9 +7,27 @@
 
 import UIKit
 
-public class SimpleIndicatorView: UIView {
-    public let colors: [UIColor]
-    public let lineWidth: CGFloat
+open class SimpleIndicatorView: UIView {
+    private static let colorAnimationKey = "simpleindicator.color"
+        
+    public var colors: [UIColor] {
+        didSet {
+            guard self.isAnimating else {
+                return
+            }
+            self.applyColorAnimation()
+        }
+    }
+
+    public var lineWidth: CGFloat {
+        didSet {
+            self.shapeLayer.lineWidth = self.lineWidth
+        }
+    }
+    
+    override public var intrinsicContentSize: CGSize {
+        return CGSize(width: 30, height: 30)
+    }
     
     private lazy var shapeLayer: ProgressShapeLayer = {
         ProgressShapeLayer(strokeColor: colors.first!, lineWidth: lineWidth)
@@ -28,8 +46,8 @@ public class SimpleIndicatorView: UIView {
     }
     
     public init(frame: CGRect,
-         colors: [UIColor],
-         lineWidth: CGFloat)
+                colors: [UIColor],
+                lineWidth: CGFloat)
     {
         self.colors = colors
         self.lineWidth = lineWidth
@@ -52,7 +70,7 @@ public class SimpleIndicatorView: UIView {
         self.backgroundColor = .clear
     }
     
-    public override func layoutSubviews() {
+    override public func layoutSubviews() {
         super.layoutSubviews()
         
         self.layer.cornerRadius = self.frame.width / 2
@@ -89,15 +107,11 @@ public class SimpleIndicatorView: UIView {
         strokeAnimationGroup.duration = 1
         strokeAnimationGroup.repeatDuration = .infinity
         strokeAnimationGroup.animations = [startAnimation, endAnimation]
+        strokeAnimationGroup.isRemovedOnCompletion = false
         
         self.shapeLayer.add(strokeAnimationGroup, forKey: nil)
         
-        let colorAnimation = StrokeColorAnimation(
-            colors: colors.map { $0.cgColor },
-            duration: strokeAnimationGroup.duration * Double(self.colors.count)
-        )
-
-        self.shapeLayer.add(colorAnimation, forKey: nil)
+        self.applyColorAnimation()
         
         self.layer.addSublayer(self.shapeLayer)
     }
@@ -110,7 +124,18 @@ public class SimpleIndicatorView: UIView {
             duration: 2,
             repeatCount: .greatestFiniteMagnitude
         )
-        
+        rotationAnimation.isRemovedOnCompletion = false
         self.layer.add(rotationAnimation, forKey: nil)
+    }
+    
+    private func applyColorAnimation() {
+        let colorAnimation = StrokeColorAnimation(
+            colors: colors.map { $0.cgColor },
+            duration: Double(self.colors.count)
+        )
+        colorAnimation.isRemovedOnCompletion = false
+        
+        self.shapeLayer.removeAnimation(forKey: SimpleIndicatorView.colorAnimationKey)
+        self.shapeLayer.add(colorAnimation, forKey: SimpleIndicatorView.colorAnimationKey)
     }
 }
